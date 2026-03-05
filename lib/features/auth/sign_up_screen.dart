@@ -147,34 +147,20 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     if (name.isNotEmpty &&
                         email.isNotEmpty &&
                         password.isNotEmpty) {
-                      try {
-                        await ref
-                            .read(authProvider.notifier)
-                            .signUp(
-                              email: email,
-                              password: password,
-                              name: name,
-                              age: age,
-                              gender: gender,
-                            );
-
-                        // Check for errors before navigating
-                        if (ref.read(authProvider).error == null &&
-                            context.mounted) {
-                          context.go('/home');
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Unexpected error: ${e.toString()}',
-                              ),
-                              behavior: SnackBarBehavior.floating,
-                              backgroundColor: AppColors.primaryRed,
-                            ),
+                      await ref
+                          .read(authProvider.notifier)
+                          .signUp(
+                            email: email,
+                            password: password,
+                            name: name,
+                            age: age,
+                            gender: gender,
                           );
-                        }
+
+                      // Check for errors before navigating
+                      if (ref.read(authProvider).error == null &&
+                          context.mounted) {
+                        context.go('/login');
                       }
                     }
                   },

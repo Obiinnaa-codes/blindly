@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/auth_service.dart';
 
 /// Provider for the AuthService.
@@ -32,8 +33,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       await _authService.signIn(email: email, password: password);
       state = state.copyWith(isLoading: false);
+    } on AuthException catch (e) {
+      state = state.copyWith(isLoading: false, error: e.message);
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      state = state.copyWith(
+        isLoading: false,
+        error: 'An unexpected error occurred. Please try again.',
+      );
     }
   }
 
@@ -55,8 +61,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
         gender: gender,
       );
       state = state.copyWith(isLoading: false);
+    } on AuthException catch (e) {
+      state = state.copyWith(isLoading: false, error: e.message);
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      state = state.copyWith(
+        isLoading: false,
+        error: 'An unexpected error occurred. Please try again.',
+      );
     }
   }
 
@@ -66,8 +77,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       await _authService.signOut();
       state = state.copyWith(isLoading: false);
+    } on AuthException catch (e) {
+      state = state.copyWith(isLoading: false, error: e.message);
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      state = state.copyWith(
+        isLoading: false,
+        error: 'An unexpected error occurred. Please try again.',
+      );
     }
   }
 }

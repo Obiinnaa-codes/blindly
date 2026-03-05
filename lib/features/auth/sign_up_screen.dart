@@ -137,11 +137,46 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 AppButton(
                   text: 'CREATE ACCOUNT',
                   isLoading: authState.isLoading,
-                  onPressed: () {
-                    // TODO: Implement actual registration logic with all fields
-                    ref
-                        .read(authProvider.notifier)
-                        .login(_emailController.text, _passwordController.text);
+                  onPressed: () async {
+                    final name = _nameController.text.trim();
+                    final email = _emailController.text.trim();
+                    final password = _passwordController.text.trim();
+                    final age = int.tryParse(_ageController.text) ?? 18;
+                    final gender = _genderController.text.trim();
+
+                    if (name.isNotEmpty &&
+                        email.isNotEmpty &&
+                        password.isNotEmpty) {
+                      try {
+                        await ref
+                            .read(authProvider.notifier)
+                            .signUp(
+                              email: email,
+                              password: password,
+                              name: name,
+                              age: age,
+                              gender: gender,
+                            );
+
+                        // Check for errors before navigating
+                        if (ref.read(authProvider).error == null &&
+                            context.mounted) {
+                          context.go('/home');
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Unexpected error: ${e.toString()}',
+                              ),
+                              behavior: SnackBarBehavior.floating,
+                              backgroundColor: AppColors.primaryRed,
+                            ),
+                          );
+                        }
+                      }
+                    }
                   },
                 ),
                 const SizedBox(height: 24),

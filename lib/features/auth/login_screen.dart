@@ -123,10 +123,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 AppButton(
                   text: 'LOGIN',
                   isLoading: authState.isLoading,
-                  onPressed: () {
-                    ref
-                        .read(authProvider.notifier)
-                        .login(_emailController.text, _passwordController.text);
+                  onPressed: () async {
+                    final email = _emailController.text.trim();
+                    final password = _passwordController.text.trim();
+
+                    try {
+                      if (email.isNotEmpty && password.isNotEmpty) {
+                        await ref
+                            .read(authProvider.notifier)
+                            .login(email, password);
+
+                        // Check for errors before navigating
+                        if (ref.read(authProvider).error == null &&
+                            context.mounted) {
+                          context.go('/home');
+                        }
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Unexpected error: ${e.toString()}'),
+                            behavior: SnackBarBehavior.floating,
+                            backgroundColor: AppColors.primaryRed,
+                          ),
+                        );
+                      }
+                    }
                   },
                 ),
                 const SizedBox(height: 24),

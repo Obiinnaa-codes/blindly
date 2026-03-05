@@ -1,4 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../services/auth_service.dart';
+
+/// Provider for the AuthService.
+final authServiceProvider = Provider<AuthService>((ref) => AuthService());
 
 /// Represents the state of the authentication process.
 class AuthState {
@@ -16,31 +20,60 @@ class AuthState {
   }
 }
 
-/// Notifier that manages the [AuthState] and handles login logic.
+/// Notifier that manages the [AuthState] and handles authentication logic.
 class AuthNotifier extends StateNotifier<AuthState> {
-  AuthNotifier() : super(AuthState());
+  final AuthService _authService;
 
-  /// Simulates a login request.
-  /// In a real app, this would call an AuthRepository or API.
+  AuthNotifier(this._authService) : super(AuthState());
+
+  /// Handles sign in with email and password.
   Future<void> login(String email, String password) async {
-    // Start loading and clear any previous errors
     state = state.copyWith(isLoading: true, error: null);
-
-    // Simulate network latency
-    await Future.delayed(const Duration(seconds: 2));
-
-    // Dummy validation logic
-    if (email == "test@test.com" && password == "password") {
+    try {
+      await _authService.signIn(email: email, password: password);
       state = state.copyWith(isLoading: false);
-      // Here you would typically navigate to home or save a session token
-    } else {
-      // Set error message if validation fails
-      state = state.copyWith(isLoading: false, error: "Invalid credentials");
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
+  /// Handles sign up with all user details.
+  Future<void> signUp({
+    required String email,
+    required String password,
+    required String name,
+    required int age,
+    required String gender,
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await _authService.signUp(
+        email: email,
+        password: password,
+        name: name,
+        age: age,
+        gender: gender,
+      );
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
+  /// Handles sign out.
+  Future<void> signOut() async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      await _authService.signOut();
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 }
 
 /// Provider that allows the UI to listen to and interact with the Auth state.
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  return AuthNotifier();
+  final authService = ref.watch(authServiceProvider);
+  return AuthNotifier(authService);
 });

@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/theme/app_theme.dart';
 import 'core/router.dart';
+import 'core/constants/supabase_constants.dart';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-void main() {
+  await Supabase.initialize(
+    url: SupabaseConstants.url,
+    anonKey: SupabaseConstants.anonKey,
+  );
+
   runApp(
     // ProviderScope is required for Riverpod to manage state across the app
     const ProviderScope(child: MyApp()),

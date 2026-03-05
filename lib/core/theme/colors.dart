@@ -8,8 +8,8 @@ class AppColors {
   static const Color textSecondary = Color(0xFF8E8E93);
 
   // Room Colors
-  static const Color globalChat = Color(0xFF4FC3F7);
-  static const Color loveVibes = Color(0xFFFF8A80);
-  static const Color adventure = Color(0xFF81C784);
-  static const Color casual = Color(0xFF90CAF9);
+  static const Color globalChat = Color(0xFF3FBECA);
+  static const Color loveVibes = Color(0xFFFF6472);
+  static const Color adventure = Color(0xFF61CC91);
+  static const Color casual = Color(0xFF5F8CFC);
 }
